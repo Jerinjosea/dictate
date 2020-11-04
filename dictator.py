@@ -1,8 +1,14 @@
-from gtts import gTTS
+import pyttsx3
 import time
-from playsound import playsound
 import os
-import keyboard
+from pynput import keyboard
+
+engine = pyttsx3.init()
+
+#change basic properties here
+engine.setProperty('rate', 120) #set speed here
+voices = engine.getProperty('voices')
+engine.setProperty('voice', voices[0].id)   #changing index, changes voices. 1 for female
 
 language = 'en-IN'
 #change language here
@@ -53,7 +59,7 @@ def calcDiff(str):
         # If we get 4 consecutive consonants 
         # then it is a hard word  
         if(consec_conso == 4): 
-            hrad_words += 1
+            hard_words += 1
   
             # Move to the next word 
             while(i < len(str) and str[i] != " "): 
@@ -82,6 +88,13 @@ def calcDiff(str):
     # Return difficulty of sentence      
     return (5 * hard_words + 3 * easy_words)
 
+#for using pause
+def on_press(key):
+    if key == keyboard.Key.space:
+        print("\n!!Paused!!\nEnter space to resume\n")
+        input("enter r:")
+            
+
 f = open("text.txt",'r',encoding = 'utf-8')
 
 st = f.read()
@@ -89,26 +102,22 @@ st = f.read()
 lines = st.split('.')
 
 for line in lines:
-
     splited =  splitTextToFour(line)
     #split paragraph in to lines
-
     for word in splited:
         d=calcDiff(word) #calculate difficulty of words
-        myobj = gTTS(text=word, lang=language, slow=False) 
-        myobj.save("word.mp3")
+        engine.say(word)
+        engine.runAndWait()
         time.sleep(2)
         print(word)
         #to repeat if required
         if d>17: #change this value if required
             time.sleep(4)
-            playsound('word.mp3')
-        playsound('word.mp3')
-        os.remove('word.mp3')
-    
-    time.sleep(2) #to give a pause after a line
-    myobj = gTTS(text="next sentence", lang=language, slow=False) 
-    myobj.save("word.mp3")
-    playsound('word.mp3')        
+            engine.say(word)
+            engine.runAndWait()
+    time.sleep(2)
+time.sleep(2) #to give a pause after a line
+engine.say('next sentence')
+
 
 f.close()
