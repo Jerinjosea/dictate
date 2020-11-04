@@ -3,10 +3,9 @@ Tired of writing by looking at the screen? Want someone to dictate? then you are
 
 It is a python code.
 requires:
-  -> gtts
-  -> playsound
-  -> time
-  -> os
+    pyttsx,
+    time,
+    os
   libraries
   
   It is not a perfect solution, But works fine
